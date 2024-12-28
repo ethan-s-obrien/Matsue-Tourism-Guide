@@ -1,0 +1,78 @@
+/* Navbar Styling */
+.custom-navbar {
+    background-color: #fdf5df !important;
+    border-bottom: 2px solid #5ebec4;
+}
+
+/* Navbar Brand Styling */
+.custom-navbar .navbar-brand
+{
+    color: #5ebec4;
+    font-family: "Fjalla One", serif;
+    font-weight: 400;
+    font-style: normal;
+
+}
+
+/* Navbar Items Styling */
+.custom-navbar .navbar-nav
+{
+    color: #5ebec4;
+    font-family: "Fjalla One", serif;
+    font-weight: 400;
+    font-style: normal;
+
+}
+
+.custom-navbar .nav-link:hover {
+    background-color: #f92c85; /* Darker green on hover */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Active Link Style */
+.custom-navbar .nav-link.active {
+    background-color: #fdf5df; /* White background */
+    color: #f92c85; /* Green text */
+    border-radius: 3px; /* Rounded corners */
+}
+
+body {
+    background-color: #fdf5df;
+    font-family: "Libre Baskerville", serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #6e6e6e;
+}
+
+.carousel-inner {
+    position: relative;
+    width: 100%;
+    max-height: 60vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.carousel-inner img {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 90%;
+    overflow: hidden;
+}
+
+footer.bg-light {
+    background-color: #fdf5df !important;
+    border-top: 2px solid #5ebec4;
+    color: #6e6e6e;
+    font-family: "Fjalla One", serif;
+    font-weight: 400;
+    font-style: normal;
+}

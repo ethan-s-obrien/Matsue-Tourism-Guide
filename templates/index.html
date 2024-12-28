@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Matsue Tourism Guide
+{% endblock %}
+
+{% block main %}
+    <h1>Your one stop shop to get themost of your trip to the San'in's City of Water, a beacon of authentic Japan.</h1>
+    <p>Explore the sublime beauty, rich culture, and deep history of Matsue.</p>
+    <div id="carouselExampleCaptions" class="carousel slide">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{{ url_for('static', filename='images/F0i9zZSXgAEDIgt.jpg') }}" alt="Castle Innit">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>History</h5>
+              <p>Explore the rich history of this ancient province and authentic castle town.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='images/ダイビング2野波.jpg') }}" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Second slide label</h5>
+              <p>Some representative placeholder content for the second slide.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{{ url_for('static', filename='images/448159311_1491538911733822_388341683995490491_n.jpg') }}" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Third slide label</h5>
+              <p>Some representative placeholder content for the third slide.</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev" aria-label="Previous">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next" aria-label="Next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+{% endblock %}
