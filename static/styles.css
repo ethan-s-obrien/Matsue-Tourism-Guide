@@ -76,3 +76,38 @@ footer.bg-light {
     font-weight: 400;
     font-style: normal;
 }
+
+.form-check {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 5px solid transparent; /*invisible border to prevent and wiggles from the hover color */
+}
+
+.form-check .form-check-label {
+    margin-top: 6px;
+    margin-left: 5px;
+    padding: 5px;
+    padding-right: 10px;
+    border: 1px solid transparent;
+}
+
+/* Highlight the label on hover */
+.form-check:hover .form-check-label {
+    background-color: #f92c85;
+    border-radius: 5px;
+    padding: 5px;
+    color: #6e6e6e;
+    transition: background-color 0.3s ease; /* smooth hover effect transition */
+}
+
+.form-check-input:checked + .form-check-label {
+    background-color: #5ebec4;
+    border-radius: 5px;
+    padding: 5px;
+    color: #6e6e6e;
+    font-weight: bold;
+    border: 1px solid #c3e6cb;
+}
+
+
