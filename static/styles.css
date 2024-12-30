@@ -77,37 +77,87 @@ footer.bg-light {
     font-style: normal;
 }
 
-.form-check {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border: 5px solid transparent; /*invisible border to prevent and wiggles from the hover color */
+.text-center {
+    margin-bottom: 20px;
 }
 
-.form-check .form-check-label {
-    margin-top: 6px;
-    margin-left: 5px;
+.drag-list {
     padding: 5px;
-    padding-right: 10px;
-    border: 1px solid transparent;
+    list-style-type: decimal;
+    padding-left: 20px;
 }
 
-/* Highlight the label on hover */
-.form-check:hover .form-check-label {
-    background-color: #f92c85;
-    border-radius: 5px;
+.drag-item {
     padding: 5px;
-    color: #6e6e6e;
-    transition: background-color 0.3s ease; /* smooth hover effect transition */
+    border: 5px solid transparent;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-check-input:checked + .form-check-label {
+.drag-item:hover {
     background-color: #5ebec4;
     border-radius: 5px;
     padding: 5px;
     color: #6e6e6e;
-    font-weight: bold;
-    border: 1px solid #c3e6cb;
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.drag-list.dragging {
+    transition: none;
+    opacity: 1;
+    cursor: grabbing;
+}
 
+.time-picker {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+
+.time-picker select {
+    display: flex;
+    width: 50px;
+    align-items: center;
+
+}
+
+.age-brackets {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .age-brackets select {
+    display: flex;
+    width: 50px;
+    align-items: center;
+
+}
+  
+  select {
+    display: flex;
+    width: 60%;
+    height: 40px;
+    overflow: hidden;
+    font-size: 1.2rem;
+    text-align: center;
+    -webkit-appearance: none; /* Removes native styling for a custom look */
+    appearance: none;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  select option {
+    font-size: 1rem;
+  }
+
+  .form-select {
+    gap: 20px;
+    width: 150px;
+  }
+  
