@@ -43,3 +43,17 @@ rank INTEGER,
 preference TEXT,
 FOREIGN KEY (response_id) REFERENCES SurveyResponses(response_id)
 );
+
+CREATE TABLE TouristSpots (
+spot_id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+category TEXT NOT NULL,  -- e.g., 'historical', 'cultural', 'natural'
+description TEXT,
+image_url TEXT,
+homepage TEXT,
+latitude REAL,
+longitutde REAL,
+open_hours REAL,
+duration TEXT,
+popularity INTEGER
+);
