@@ -137,7 +137,61 @@ def register():
 def survey():
     if request.method == 'POST':
         #Process survey data
-        pref_1 = request.form.get('1st_pref')
         user_id = session.get('user_id')
+        travel_mode = request.form.get('travel_mode')
+        group_size = request.form.get('group_size')
+        days = int(request.form.get('hours'))
+        country = request.form.get('country')
+        preferences = request.form.get('preferences').split(',') # Converts CSV to a list
+        age_brackets = {
+            '0-9': int(request.form.get('age_0_9', 0)),
+            '10-19': int(request.form.get('age_10_19', 0)),
+            '20-29': int(request.form.get('age_20_29', 0)),
+            '30-39': int(request.form.get('age_30_39', 0)),
+            '40-49': int(request.form.get('age_40_49', 0)),
+            '50-59': int(request.form.get('age_50_59', 0)),
+            '60-69': int(request.form.get('age_60_69', 0)),
+            '70+': int(request.form.get('age_70+', 0)),
+        }
+
+        # Save survey responses
+        conn = get_db()
+        try: 
+            # Insert survey response
+            response_id = conn.execute(
+                "INSERT INTO SurveyResponses (user_id) VALUES (?)", (user_id,)
+            ).lastrowid
+
+            # Insert preferences
+            for rank, category in enumerate(preferences, start=1):
+                conn.execute(
+                    "INSERT INTO Preferences (response_id, preference, rank) VALUES (?,?,?)",
+                    (response_id, category, rank)
+                )
+            
+            # Insert trip length
+            conn.execute(
+                "INSERT INTO TripLength (response_id, days, hours) VALUES (?,?,?)",
+                (response_id, days, hours)
+            )
+
+            # Insert age brackets
+            for bracket, count, in age_brackets.items():
+                if count > 0: # Only save non-zero brackets
+                    conn.execute(
+                        "INSERT INTO AgeBrackets (response_id, age_bracket, num_people) VALUES (?, ?, ?)",
+                        (response_id, bracket, count)
+                    )
+
+            # Commit changes
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            print(f"Error saving survey data: {e}")
+            return "An error occurred while saving your survey data.", 500
+
+        # Redirect to the next step
         return redirect('/mytrip')
+    
+    # Render form for GET requests
     return render_template('survey.html')

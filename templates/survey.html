@@ -6,148 +6,148 @@
 
 {% block main %}
 <body>
-        <h1 class="text-center" id="header">Answer to Find Your Journey</h1>
-        <form method="POST" action="/survey">
-            <div class="mb-3">
-                <h4>How will you travel to Matsue?</h4>
-                <div class="d-flex justify-content-center">
-                    <div>
-                    <select class="form-select" id="question_1" name="question_1" required>
-                        <option value="" disabled selected>Select</option>
-                        <option value="bus">Bus</option>
-                        <option value="plane">Plane</option>
-                        <option value="train">Train</option>
-                        <option value="car">Car</option>
-                    </select>
-                    </div>
+    <h1 class="text-center" id="header">Answer to Find Your Journey</h1>
+    <form method="POST" action="/survey">
+        <div class="mb-3">
+            <h4>How will you travel to Matsue?</h4>
+            <div class="d-flex justify-content-center">
+                <div>
+                <select class="form-select" name="travel_mode" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="bus">Bus</option>
+                    <option value="plane">Plane</option>
+                    <option value="train">Train</option>
+                    <option value="car">Car</option>
+                </select>
                 </div>
             </div>
-            <div class="mb-3">
-                <h4>How many of you will travel to Matsue?</h4>
-                <div class="d-flex justify-content-center">
-                <select class="form-select" id="question_2" name="question_2" required>
-                    <option value="" disabled selected>Select</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="4+">4+</option>
+        </div>
+        <div class="mb-3">
+            <h4>How many of you will travel to Matsue?</h4>
+            <div class="d-flex justify-content-center">
+            <select class="form-select" name="group_size" required>
+                <option value="" disabled selected>Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="4+">4+</option>
+            </select>
+        </div>
+        </div>
+        <div class="mb-3">
+            <h4>How long do you plan to be in Matsue for?</h4>
+            <div class="time-picker">
+                <label for="days">Days</label>
+                <select id="days" name="days" required>
+                  <!-- Days options dynamically populated -->
+                </select>
+              
+                <label for="hours">Hours</label>
+                <select id="hours" name="hours" required>
+                  <!-- Hours options dynamically populated -->
+                </select>
+              </div>
+        </div>
+        <div class="mb-3">
+            <h4>What country are you from?</h4>
+            <div class="d-flex justify-content-center">
+            <select class="form-select" name="country" required>
+                <option value="" disabled selected>Select</option>
+                <option value="USA">U.S.</option>
+                <option value="CAN">Canada</option>
+                <option value="UK">U.K.</option>
+                <option value="AUS">Australia</option>
+                <option value="NZ">New Zealand</option>
+                <option value="IRL">Ireland</option>
+                <option value="GER">Germany</option>
+                <option value="FRA">France</option>
+                <option value="IT">Italy</option>
+                <option value="SPN">Spain</option>
+                <option value="POR">Portugal</option>
+                <option value="FIN">Finland</option>
+                <option value="SWE">Sweden</option>
+                <option value="NOR">Norway</option>
+                <option value="NED">Netherlands</option>
+                <option value="DEN">Denmark</option>
+                <option value="MEX">Mexico</option>
+                <option value="BRA">Brazil</option>
+                <option value="VIET">Vietnam</option>
+                <option value="THAI">Thailand</option>
+                <option value="HK">Hong Kong</option>
+                <option value="CH">China</option>
+                <option value="SK">South Korea</option>
+                <option value="TW">Taiwan</option>
+                <option value="IN">India</option>
+                <option value="IND">Indonesia</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <h4>Please tell us the number of people in each age bracket in your group.</h4>
+            <div class="age-brackets" id="age-brackets" name="age-brackets" required>
+                <label for="0-9">0-9</label>
+                <select class="people-select" name="age_0_9">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="10-19">10-19</label>
+                <select class="people-select" name="age_10_19">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="20-29">20-29</label>
+                <select class="people-select" name="age_20_29">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="30-39">30-39</label>
+                <select class="people-select" name="age_30_39">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="40-49">40-49</label>
+                <select class="people-select" name="age_40_49">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="50-59">50-59</label>
+                <select class="people-select" name="age_50_59">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="60-69">60-69</label>
+                <select class="people-select" name="age_60_69">
+                    <!-- no. of peeps automatically populated -->
+                </select>
+
+                <label for="70+">70+</label>
+                <select class="people-select" name="age_70+">
+                    <!-- no. of peeps automatically populated -->
                 </select>
             </div>
+        </div>
+            <h4>Please rank what kind of places you'd like to see.</h4>
+            <ul id="drag-list" class="drag-list">
+                <li class="drag-item" draggable="true" data-value="Cultural">Cultural</li>
+                <li class="drag-item" draggable="true" data-value="Historic">Historic</li>
+                <li class="drag-item" draggable="true" data-value="Natural">Natural</li>
+            </ul>
+            <input type="hidden" name="preferences" id="preferences" value="">
             </div>
-            <div class="mb-3">
-                <h4>How long do you plan to be in Matsue for?</h4>
-                <div class="time-picker">
-                    <label for="days">Days</label>
-                    <select id="days">
-                      <!-- Days options dynamically populated -->
-                    </select>
-                  
-                    <label for="hours">Hours</label>
-                    <select id="hours">
-                      <!-- Hours options dynamically populated -->
-                    </select>
-                  </div>
-            </div>
-            <div class="mb-3">
-                <h4>What country are you from?</h4>
-                <div class="d-flex justify-content-center">
-                <select class="form-select" id="question_2" name="question_2" required>
-                    <option value="" disabled selected>Select</option>
-                    <option value="USA">U.S.</option>
-                    <option value="CAN">Canada</option>
-                    <option value="UK">U.K.</option>
-                    <option value="AUS">Australia</option>
-                    <option value="NZ">New Zealand</option>
-                    <option value="IRL">Ireland</option>
-                    <option value="GER">Germany</option>
-                    <option value="FRA">France</option>
-                    <option value="IT">Italy</option>
-                    <option value="SPN">Spain</option>
-                    <option value="POR">Portugal</option>
-                    <option value="FIN">Finland</option>
-                    <option value="SWE">Sweden</option>
-                    <option value="NOR">Norway</option>
-                    <option value="NED">Netherlands</option>
-                    <option value="DEN">Denmark</option>
-                    <option value="MEX">Mexico</option>
-                    <option value="BRA">Brazil</option>
-                    <option value="VIET">Vietnam</option>
-                    <option value="THAI">Thailand</option>
-                    <option value="HK">Hong Kong</option>
-                    <option value="CH">China</option>
-                    <option value="SK">South Korea</option>
-                    <option value="TW">Taiwan</option>
-                    <option value="IN">India</option>
-                    <option value="IND">Indonesia</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <h4>Please tell us the number of people in each age bracket in your group.</h4>
-                <div class="age-brackets" id="age-brackets" name="age-brackets" required>
-                    <label for="0-9">0-9</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="10-19">10-19</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="20-29">20-29</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="30-39">30-39</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="40-49">40-49</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="50-59">50-59</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="60-69">60-69</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-
-                    <label for="70+">70+</label>
-                    <select class="people-select">
-                        <!-- no. of peeps automatically populated -->
-                    </select>
-                </div>
-            </div>
-                <h4>Please rank what kind of places you'd like to see.</h4>
-                <ul id="drag-list" class="drag-list">
-                    <li class="drag-item" draggable="true" data-value="Cultural">Cultural</li>
-                    <li class="drag-item" draggable="true" data-value="Historic">Historic</li>
-                    <li class="drag-item" draggable="true" data-value="Natural">Natural</li>
-                </ul>
-                <input type="hidden" name="preferences" id="preferences" value="">
-                </div>
-            <div class="mb-3">
-                <h4>What kind of pace would you like your schedule to be?</h4>
-                <div class="d-flex justify-content-center">
-                <select class="form-select" id="question_2" name="question_2" required>
-                    <option value="" disabled selected>Select</option>
-                    <option value="jam-packed">Jam-packed</option>
-                    <option value="leeway">A Bit of Leeway</option>
-                    <option value="time">Take my Time</option>
-                </select>
-            </div>
-            </fieldset>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+        <div class="mb-3">
+            <h4>What kind of pace would you like your schedule to be?</h4>
+            <div class="d-flex justify-content-center">
+            <select class="form-select" name="pace" required>
+                <option value="" disabled selected>Select</option>
+                <option value="jam-packed">Jam-packed</option>
+                <option value="leeway">A Bit of Leeway</option>
+                <option value="time">Take my Time</option>
+            </select>
+        </div>
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
     <div class="alert alert-success mt-4" role="alert">
         Thank you for your feedback! You're now being redirected to your dashboard.
     </div>
