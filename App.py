@@ -22,6 +22,7 @@ def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(app.config['DATABASE'])
+        db.row_factory = sqlite3.Row # Enable dictionary-like row access
     return db
 
 @app.teardown_appcontext
@@ -100,32 +101,35 @@ def register():
     """Register user"""
     if request.method == 'POST':
 
+        conn = get_db()
+
         # Username & Password registration
         name = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
         # Validate registration
         if not name:
-            return apology("Missing Username", 400)
+            return render_template("error.html", message="You must provide a name."), 400
         elif not password:
-            return apology("Missing Password", 400)
+            return render_template("error.html", message="Missing password."), 400
         elif password != confirmation:
-            return apology("Password's did not match", 400)
+            return render_template("error.html", message="Passwords did not match."), 400
 
         # Check if username already exists
-        sql_count = db.execute("SELECT COUNT(*) AS count FROM users WHERE username = ?", name)
-        username_count = sql_count[0]["count"]
+        sql_count = conn.execute("SELECT COUNT(*) AS count FROM users WHERE username = ?", (name,))
+        username_count = sql_count.fetchone()[0] # Fetchone to check username isn't in use
         if username_count != 0:
-            return apology("Username already exists", 400)
+            return render_template("error.html", message="Username already exists."), 400
 
         # Hash password
         hashed_password = generate_password_hash(password)
 
-        # Insertion of valid registration into database
-        db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", name, hashed_password)
-
-        # session['user_id'] = new_user.id #Have new user be logged in
+        # Insertion of valid registration into database and fetch user_id for automatic login following registration
+        cursor = conn.execute("INSERT INTO users (username, email, hash) VALUES(?, ?, ?)", (name, email, hashed_password))
+        conn.commit()
+        session["user_id"] = cursor.lastrowid
 
         # Redirect on success
         return redirect("/survey")
@@ -136,11 +140,17 @@ def register():
 @app.route('/survey', methods=['GET', 'POST'])
 def survey():
     if request.method == 'POST':
-        #Process survey data
+        print("Survey POST request received")
+
+        # Collect user ID from session
         user_id = session.get('user_id')
+        conn = get_db()
+
+        # Collect form data
         travel_mode = request.form.get('travel_mode')
         group_size = request.form.get('group_size')
-        days = int(request.form.get('hours'))
+        days = int(request.form.get('days'))
+        hours = int(request.form.get('hours'))
         country = request.form.get('country')
         preferences = request.form.get('preferences').split(',') # Converts CSV to a list
         age_brackets = {
@@ -154,13 +164,32 @@ def survey():
             '70+': int(request.form.get('age_70+', 0)),
         }
 
-        # Save survey responses
-        conn = get_db()
+        # Insert survey responses
         try: 
             # Insert survey response
             response_id = conn.execute(
                 "INSERT INTO SurveyResponses (user_id) VALUES (?)", (user_id,)
             ).lastrowid
+
+            # Prepare questions and answers for the Answers table
+            questions_and_answers = [
+                ("How will you travel to Matsue?", travel_mode),
+                ("How many people in your group?", group_size),
+                ("How long do you plan to stay?", f"{days} days, {hours} hours"),
+                ("What country are you from?", country),
+                ("Rank your preferences", ', '.join(preferences)), #Join preferences as a string
+            ]
+
+            # Add age-bracket data as additional question-answer pairs
+            for bracket, count in age_brackets.items():
+                if count > 0:
+                    questions_and_answers.append((f"Number of people aged {bracket}", str(count)))
+
+            # Insert all questions adn answers into the Answers table
+            conn.executemany(
+                "INSERT INTO Answers (response_id, question, answer) VALUES (?, ?, ?)",
+                [(response_id, question, answer) for question, answer in questions_and_answers]
+            )
 
             # Insert preferences
             for rank, category in enumerate(preferences, start=1):
@@ -185,6 +214,7 @@ def survey():
 
             # Commit changes
             conn.commit()
+
         except Exception as e:
             conn.rollback()
             print(f"Error saving survey data: {e}")
@@ -195,3 +225,84 @@ def survey():
     
     # Render form for GET requests
     return render_template('survey.html')
+
+@app.route('/mytrip')
+def generate_itinerary():
+    """Genearte the personalized itinerary for the user"""
+    conn = get_db()
+
+    # Get the current user ID from the session
+    user_id = session.get('user_id')
+    if not user_id:
+        return render_template("error.html", message="You must be logged in to view your trip."), 403
+
+    #Fetch user data
+    user_preferences = conn.execute("""
+        SELECT preference, rank
+        FROM Preferences
+        WHERE response_id = (
+            SELECT response_id FROM SurveyResponses WHERE user_id = ?
+        )
+    """, (user_id,)).fetchall()
+    preferences = {row['preference']: row['rank'] for row in user_preferences}
+
+    trip_length = conn.execute("""
+    SELECT days, hours
+    FROM TripLength
+    WHERE response_id = (
+        SELECT response_id FROM SurveyResponses WHERE user_id = ?
+    )                           
+    """, (user_id,)).fetchone()
+
+    print(f"Trip length raw data: {trip_length}")  # Add this for debugging
+
+    # Calculate total trip time in hours
+    total_time = trip_length['days'] * 7 + trip_length['hours'] # Total hours of trip based on 7 hours of sightseeing per day
+
+    all_spots = conn.execute("""
+        SELECT name, category, description, homepage, latitude, longitude, open_hours, duration, popularity
+       FROM TouristSpots
+    """).fetchall()
+
+    # Step 2: Score and filter spots
+    scored_spots = []
+    for spot in all_spots:
+        # Category scoring
+        category_score = 10 - preferences.get(spot['category'], 10) # Default low score if not in preferences
+        # Calculate popularity score
+        popularity_score = spot['popularity'] * 2
+        # Final Score
+        final_score = category_score + popularity_score
+
+        # Convert duration (e.g., "2 hours") to minutes
+        visit_duration = estimate_visit_duration(spots['duration'])
+
+        # Add spot details and scores
+        scored_spots.append({
+            'spot': spot,
+            'score': final_score,
+            'visit_duration': visit_duration
+        })
+
+    # Step 3: Sort by score descending
+    scored_spots = sorted(scored_spots, keys=lambda x: x['score'], reverse=True)
+
+    # Step 4: Build the itinerary
+    itinerary = []
+    remaining_time = total_time
+    for spot_data in scored_spots:
+        if spot_data in scored_spots:
+            if spot_data['visit_duration'] <= remaining_time:
+                itinerary.append(spot_data['spot'])
+                remaining_time -= spot_data['visit_duration']
+
+            if remaining_time <= 0: # BReak loop no time left
+                break
+
+    def estimate_visit_duration(duration_str):
+        """Convert duration strings (e.g., '2 hours', '45 mins') to minutes."""
+        if 'hour' in duration_str:
+            return int(duration_str.split()[0]) * 60
+        elif 'min' in duration_str:
+            return int(duration_str.split()[0])
+        return 0

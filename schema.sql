@@ -52,8 +52,8 @@ description TEXT,
 image_url TEXT,
 homepage TEXT,
 latitude REAL,
-longitutde REAL,
-open_hours REAL,
+longitude REAL,
+open_hours TEXT,
 duration TEXT,
 popularity INTEGER
 );

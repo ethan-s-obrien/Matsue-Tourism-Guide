@@ -5,41 +5,51 @@
 {% endblock %}
 
 {% block main %}
-<div class="card mb-3" style="max-width: 540px;">
-
-     <div class="row g-0">
-    
-         <div class="col-md-4">
-    
-            <img src="{{ url_for('static', filename='images/F0i9zZSXgAEDIgt.jpg') }}" class="img-fluid rounded-start custom-card-img" alt="...">
-    
+<div class="container">
+    <h1 class="text-center my-4">Your Personalized Itinerary</h1>
+    <div class="row">
+        {% for spot in itinerary %}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <!-- Dynamic image for the spot -->
+                    <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
+                         class="img-fluid rounded-start custom-card-img" 
+                         alt="{{ spot.name }}">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <!-- Dynamic name and category -->
+                        <h5 class="card-title">{{ spot.name }}</h5>
+                        <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
+                        <!-- Dynamic description -->
+                        <p class="card-text">{{ spot.description }}</p>
+                        <ul class="list-group list-group-flush">
+                            <!-- Homepage -->
+                            <li class="list-group-item">
+                                <span class="label">Homepage:</span> 
+                                <a href="{{ spot.homepage }}" target="_blank">
+                                    {{ spot.homepage or 'N/A' }}
+                                </a>
+                            </li>
+                            <!-- Operating Hours -->
+                            <li class="list-group-item">
+                                <span class="label">Operating Hours:</span> 
+                                {{ spot.open_hours or 'N/A' }}
+                            </li>
+                            <!-- Location -->
+                            <li class="list-group-item">
+                                <span class="label">Location:</span> 
+                                <a href="https://www.google.com/maps?q={{ spot.latitude }},{{ spot.longitude }}" target="_blank">
+                                    View on Google Maps
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-    
-            <div class="col-md-8">
-    
-            <div class="card-body">
-    
-            <h5 class="card-title">Matsue Castle</h5>
-    
-             <h6 class="card-subtitle">Historical</h6>
-    
-             <p class="card-text">An Edo-period castle kept as it was, including defensive features.</p>
-    
-             <ul class="list-group list-group-flush">
-    
-             <li class="list-group-item"><span class="label">Homepage:</span> An item</li>
-    
-             <li class="list-group-item"><span class="label">Operating Hours:</span> An item</li>
-    
-             <li class="list-group-item"><span class="label">Location:</span> An item</li>
-    
-         </ul>
-        
-        </div>
-    
-        </div>
-    
-        </div>
-    
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
