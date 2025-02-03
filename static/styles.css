@@ -171,4 +171,58 @@ footer.bg-light {
     margin-top: 30px;
     margin-bottom: 5px;
   }
+
+/* Timeline styles */
+
+.timeline {
+    position: relative;
+    max-width: 600px;
+    margin: auto;
+}
+
+.timeline-item {
+    position: relative;
+    color: #fdf5df;
+    padding: 20px;
+    margin-bottom: 0px;
+}
+
+/* Vertical line between items */
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: #5ebec4;
+    transform: translateX(-50%);
+}
+
+.timeline-content {
+    color: #fdf5df;
+    position: relative;
+    background: #5ebec4;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    width: 100%;
+}
+
+.day-header {
+    text-align: center;
+    color: #5ebec4;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.time-header {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #6e6e6e;
+    margin-top: 5px;
+}
+
   

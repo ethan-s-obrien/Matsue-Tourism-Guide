@@ -13,7 +13,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-app.config['DATABASE'] = os.path.join(app.instance_path, 'database.db')
+app.config['DATABASE'] = os.path.join(os.path.dirname(__file__), 'database.db')
 os.makedirs(app.instance_path, exist_ok=True)
 
 
@@ -52,6 +52,8 @@ def index():
 def login():
     """Log user in"""
 
+    conn = get_db()
+
     # Forget any user_id
     session.clear()
 
@@ -66,7 +68,7 @@ def login():
             return apology("must provide password", 400)
 
         # Query database for username
-        rows = db.execute(
+        rows = conn.execute(
             "SELECT * FROM users WHERE username = ?", request.form.get("username")
         )
 
@@ -152,7 +154,7 @@ def survey():
         days = int(request.form.get('days'))
         hours = int(request.form.get('hours'))
         country = request.form.get('country')
-        preferences = request.form.get('preferences').split(',') # Converts CSV to a list
+        preferences = request.form.get('preferences')
         age_brackets = {
             '0-9': int(request.form.get('age_0_9', 0)),
             '10-19': int(request.form.get('age_10_19', 0)),
@@ -163,6 +165,10 @@ def survey():
             '60-69': int(request.form.get('age_60_69', 0)),
             '70+': int(request.form.get('age_70+', 0)),
         }
+
+        print(request.form)
+        print(f"Preferences received: {preferences}")
+
 
         # Insert survey responses
         try: 
@@ -185,17 +191,17 @@ def survey():
                 if count > 0:
                     questions_and_answers.append((f"Number of people aged {bracket}", str(count)))
 
-            # Insert all questions adn answers into the Answers table
+            # Insert all questions and answers into the Answers table
             conn.executemany(
                 "INSERT INTO Answers (response_id, question, answer) VALUES (?, ?, ?)",
                 [(response_id, question, answer) for question, answer in questions_and_answers]
             )
 
             # Insert preferences
-            for rank, category in enumerate(preferences, start=1):
+            for preference in preferences:
                 conn.execute(
-                    "INSERT INTO Preferences (response_id, preference, rank) VALUES (?,?,?)",
-                    (response_id, category, rank)
+                    "INSERT INTO Preferences (response_id, preference) VALUES (?,?)",
+                    (response_id, preference)
                 )
             
             # Insert trip length
@@ -238,13 +244,13 @@ def generate_itinerary():
 
     #Fetch user data
     user_preferences = conn.execute("""
-        SELECT preference, rank
+        SELECT preference
         FROM Preferences
         WHERE response_id = (
             SELECT response_id FROM SurveyResponses WHERE user_id = ?
         )
     """, (user_id,)).fetchall()
-    preferences = {row['preference']: row['rank'] for row in user_preferences}
+    preferences = {row['preference']: len(user_preferences) -index for index, row in enumerate(user_preferences)}
 
     trip_length = conn.execute("""
     SELECT days, hours
@@ -259,33 +265,35 @@ def generate_itinerary():
     # Calculate total trip time in hours
     total_time = trip_length['days'] * 7 + trip_length['hours'] # Total hours of trip based on 7 hours of sightseeing per day
 
+    #Debug database path
+    print(f"Database path: {app.config['DATABASE']}")
+
+
     all_spots = conn.execute("""
-        SELECT name, category, description, homepage, latitude, longitude, open_hours, duration, popularity
-       FROM TouristSpots
+        SELECT name, category, description, homepage, latitude, longitude, open_hours, duration_hours, popularity
+        FROM TouristSpots
     """).fetchall()
+
 
     # Step 2: Score and filter spots
     scored_spots = []
     for spot in all_spots:
         # Category scoring
-        category_score = 10 - preferences.get(spot['category'], 10) # Default low score if not in preferences
+        category_score = preferences.get(spot['category'], 0) # Default low score if not in preferences
         # Calculate popularity score
-        popularity_score = spot['popularity'] * 2
+        popularity_score = spot['popularity']
         # Final Score
         final_score = category_score + popularity_score
-
-        # Convert duration (e.g., "2 hours") to minutes
-        visit_duration = estimate_visit_duration(spots['duration'])
 
         # Add spot details and scores
         scored_spots.append({
             'spot': spot,
             'score': final_score,
-            'visit_duration': visit_duration
+            'visit_duration': (spot['duration_hours'])
         })
 
     # Step 3: Sort by score descending
-    scored_spots = sorted(scored_spots, keys=lambda x: x['score'], reverse=True)
+    scored_spots = sorted(scored_spots, key=lambda x: x['score'], reverse=True)
 
     # Step 4: Build the itinerary
     itinerary = []
@@ -296,13 +304,34 @@ def generate_itinerary():
                 itinerary.append(spot_data['spot'])
                 remaining_time -= spot_data['visit_duration']
 
-            if remaining_time <= 0: # BReak loop no time left
+            if remaining_time <= 0: # Beak loop no time left
                 break
 
-    def estimate_visit_duration(duration_str):
-        """Convert duration strings (e.g., '2 hours', '45 mins') to minutes."""
-        if 'hour' in duration_str:
-            return int(duration_str.split()[0]) * 60
-        elif 'min' in duration_str:
-            return int(duration_str.split()[0])
-        return 0
+    # Step 5: Divide trip schedule into days with mornings and afternoons
+    current_day = 1
+    morning_count = 0
+    afternoon_count = 0
+    structured_itinerary = {}
+
+    for spot_data in scored_spots:
+        if current_day not in structured_itinerary:
+            structured_itinerary[current_day] = []
+
+        spot = dict(spot_data['spot']) # Feed in all the data to structured_itinerary
+        visit_duration = spot_data['visit_duration']
+
+        if morning_count < 2:
+            spot['time_of_day'] = "Morning"
+            structured_itinerary[current_day].append(spot)
+            morning_count += 1
+        elif afternoon_count < 3:
+            spot['time_of_day'] = "Afternoon"
+            structured_itinerary[current_day].append(spot)
+            afternoon_count += 1
+        else:
+            current_day += 1
+            morning_count = 0
+            afternoon_count = 0
+
+    
+    return render_template("mytrip.html", itinerary=structured_itinerary)

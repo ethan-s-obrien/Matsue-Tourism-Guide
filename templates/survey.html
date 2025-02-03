@@ -132,8 +132,8 @@
                 <li class="drag-item" draggable="true" data-value="Historic">Historic</li>
                 <li class="drag-item" draggable="true" data-value="Natural">Natural</li>
             </ul>
-            <input type="hidden" name="preferences" id="preferences" value="">
             </div>
+            <input type="hidden" name="preferences" id="preferences" value="">
         <div class="mb-3">
             <h4>What kind of pace would you like your schedule to be?</h4>
             <div class="d-flex justify-content-center">
@@ -153,70 +153,84 @@
     </div>
 
     <script>
-        const dragList = document.getElementById('drag-list');
-        const hiddenInput = document.getElementById('preferences');
-        let draggingItem = null;
-
-        dragList.addEventListener('dragstart', (e) => {
-            draggingItem = e.target;
-            e.target.classList.add('dragging');
-        });
-
-        dragList.addEventListener('dragend', (e) => {
-            e.target.classList.remove('dragging');
-        });
-
-        dragList.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const draggingOver = e.target.closest('.drag-item');
-            if (draggingOver && draggingOver !== draggingItem) {
-                const bounding = draggingOver.getBoundingClientRect();
-                const offset = e.clientY - bounding.top;
-                if (offset > bounding.height / 2) {
-                    draggingOver.after(draggingItem);
-                } else {
-                    draggingOver.before(draggingItem);
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize drag-and-drop ranking
+            const dragList = document.getElementById('drag-list');
+            const hiddenInput = document.getElementById('preferences');
+        
+            if (dragList && hiddenInput) {
+                let draggingItem = null;
+        
+                dragList.addEventListener('dragstart', (e) => {
+                    draggingItem = e.target;
+                    e.target.classList.add('dragging');
+                });
+        
+                dragList.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
+        
+                dragList.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const draggingOver = e.target.closest('.drag-item');
+                    if (draggingOver && draggingOver !== draggingItem) {
+                        const bounding = draggingOver.getBoundingClientRect();
+                        const offset = e.clientY - bounding.top;
+                        if (offset > bounding.height / 2) {
+                            draggingOver.after(draggingItem);
+                        } else {
+                            draggingOver.before(draggingItem);
+                        }
+                    }
+                });
+        
+                // Update the hidden input value when the form is submitted
+                const form = document.querySelector('form[method="POST"]');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        const orderedItems = Array.from(dragList.children).map(item => item.dataset.value);
+                        hiddenInput.value = orderedItems.join(',');
+                        console.log(`Preferences being submitted: ${hiddenInput.value}`); // Debug log
+                    });
                 }
             }
+        
+            // Populate dropdowns for days, hours, and people
+            const daysSelect = document.getElementById('days');
+            const hoursSelect = document.getElementById('hours');
+            const peopleSelects = document.querySelectorAll('.people-select');
+        
+            if (daysSelect) {
+                for (let i = 0; i <= 30; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i; // Days from 0 to 30
+                    daysSelect.appendChild(option);
+                }
+            }
+        
+            if (hoursSelect) {
+                for (let i = 0; i < 24; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i; // Hours from 0 to 23
+                    hoursSelect.appendChild(option);
+                }
+            }
+        
+            if (peopleSelects) {
+                peopleSelects.forEach(select => {
+                    for (let i = 0; i <= 10; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = i; // People from 0 to 10
+                        select.appendChild(option);
+                    }
+                });
+            }
         });
-
-        // Populate options dynamically
-        const daysSelect = document.getElementById('days');
-        const hoursSelect = document.getElementById('hours');
-        const peopleSelects = document.querySelectorAll('.people-select');
-
-        // Populate days (e.g., 0 to 30 days)
-        for (let i = 0; i <= 30; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = `${i}`;
-        daysSelect.appendChild(option);
-        }
-
-        // Populate hours (e.g., 0 to 23 hours)
-        for (let i = 0; i < 24; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = `${i}`;
-        hoursSelect.appendChild(option);
-        }
-
-        // Populate each select element with the number of people to select in form
-        peopleSelects.forEach(select=> {
-            for (let i = 0; i < 10; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = `${i}`;
-                select.appendChild(option);
-        }
-    });
-
-        // Update the hidden input value when the form is submitted
-        document.getElementById('preference-form').addEventListener('submit', (e) => {
-            const orderedItems = Array.from(dragList.children).map(item => item.dataset.value);
-            hiddenInput.value = orderedItems.join(',');
-        });
-    </script>
+        </script>
+        
     
 </body>
 {% endblock %}

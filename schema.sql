@@ -39,7 +39,6 @@ FOREIGN KEY (response_id) REFERENCES SurveyResponses(response_id)
 CREATE TABLE Preferences (
 preference_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 response_id INTEGER,
-rank INTEGER,
 preference TEXT,
 FOREIGN KEY (response_id) REFERENCES SurveyResponses(response_id)
 );
@@ -54,6 +53,6 @@ homepage TEXT,
 latitude REAL,
 longitude REAL,
 open_hours TEXT,
-duration TEXT,
+duration_hours REAL,
 popularity INTEGER
 );

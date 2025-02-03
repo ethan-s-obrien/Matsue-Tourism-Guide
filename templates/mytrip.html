@@ -7,49 +7,104 @@
 {% block main %}
 <div class="container">
     <h1 class="text-center my-4">Your Personalized Itinerary</h1>
-    <div class="row">
-        {% for spot in itinerary %}
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <!-- Dynamic image for the spot -->
-                    <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
-                         class="img-fluid rounded-start custom-card-img" 
-                         alt="{{ spot.name }}">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <!-- Dynamic name and category -->
-                        <h5 class="card-title">{{ spot.name }}</h5>
-                        <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
-                        <!-- Dynamic description -->
-                        <p class="card-text">{{ spot.description }}</p>
-                        <ul class="list-group list-group-flush">
-                            <!-- Homepage -->
-                            <li class="list-group-item">
-                                <span class="label">Homepage:</span> 
-                                <a href="{{ spot.homepage }}" target="_blank">
-                                    {{ spot.homepage or 'N/A' }}
-                                </a>
-                            </li>
-                            <!-- Operating Hours -->
-                            <li class="list-group-item">
-                                <span class="label">Operating Hours:</span> 
-                                {{ spot.open_hours or 'N/A' }}
-                            </li>
-                            <!-- Location -->
-                            <li class="list-group-item">
-                                <span class="label">Location:</span> 
-                                <a href="https://www.google.com/maps?q={{ spot.latitude }},{{ spot.longitude }}" target="_blank">
-                                    View on Google Maps
-                                </a>
-                            </li>
-                        </ul>
+    <div class="timeline">
+        {% for day, spots in itinerary.items() %}
+    <h3 class="day-header">Day {{ day }}</h3>
+
+    <h4 class="time-header">Morning</h4>
+
+    {% for spot in spots %}
+        {% if spot.time_of_day == "Morning" %}
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <!-- Dynamic image for the spot -->
+                            <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
+                                 class="img-fluid rounded-start custom-card-img" 
+                                 alt="{{ spot.name }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <!-- Dynamic name and category -->
+                                <h5 class="card-title">{{ spot.name }}</h5>
+                                <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
+                                <!-- Dynamic description -->
+                                <p class="card-text">{{ spot.description }}</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <span class="label">Homepage:</span> 
+                                        <a href="{{ spot.homepage }}" target="_blank">
+                                            {{ spot.homepage or 'N/A' }}
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="label">Operating Hours:</span> 
+                                        {{ spot.open_hours or 'N/A' }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="label">Location:</span> 
+                                        <a href="https://www.google.com/maps?q={{ spot.latitude }},{{ spot.longitude }}" target="_blank">
+                                            View on Google Maps
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
-</div>
+        {% endif %}
+    {% endfor %}
+
+    <h4 class="time-header">Afternoon</h4>
+
+    {% for spot in spots %}
+        {% if spot.time_of_day == "Afternoon" %}
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <!-- Dynamic image for the spot -->
+                            <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
+                                 class="img-fluid rounded-start custom-card-img" 
+                                 alt="{{ spot.name }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <!-- Dynamic name and category -->
+                                <h5 class="card-title">{{ spot.name }}</h5>
+                                <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
+                                <!-- Dynamic description -->
+                                <p class="card-text">{{ spot.description }}</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <span class="label">Homepage:</span> 
+                                        <a href="{{ spot.homepage }}" target="_blank">
+                                            {{ spot.homepage or 'N/A' }}
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="label">Operating Hours:</span> 
+                                        {{ spot.open_hours or 'N/A' }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="label">Location:</span> 
+                                        <a href="https://www.google.com/maps?q={{ spot.latitude }},{{ spot.longitude }}" target="_blank">
+                                            View on Google Maps
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
 {% endblock %}
