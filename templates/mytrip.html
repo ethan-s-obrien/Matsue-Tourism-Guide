@@ -21,9 +21,7 @@
                     <div class="row g-0">
                         <div class="col-md-4">
                             <!-- Dynamic image for the spot -->
-                            <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
-                                 class="img-fluid rounded-start custom-card-img" 
-                                 alt="{{ spot.name }}">
+                            <img src="{{ url_for('static', filename='images/' + spot.image_url) }}" class="custom-card-img" alt="{{ spot['name'] }}">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -32,6 +30,19 @@
                                 <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
                                 <!-- Dynamic description -->
                                 <p class="card-text">{{ spot.description }}</p>
+
+                                <!-- See More button -->
+                                <button class="btn" id="see_more"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseSpot{{ loop.index }}"
+                                        aria-expanded="false"
+                                        aria-controls="collapseSpot{{ loop.index }}">
+                                    See More
+                                </button>
+
+                                <!-- Hidden Items -->
+                                <div class="collapse mt-2" id="collapseSpot{{ loop.index }}">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <span class="label">Homepage:</span> 
@@ -50,6 +61,7 @@
                                         </a>
                                     </li>
                                 </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -69,9 +81,7 @@
                     <div class="row g-0">
                         <div class="col-md-4">
                             <!-- Dynamic image for the spot -->
-                            <img src="{{ spot.image_url or url_for('static', filename='images/default.jpg') }}" 
-                                 class="img-fluid rounded-start custom-card-img" 
-                                 alt="{{ spot.name }}">
+                            <img src="{{ url_for('static', filename='images/' + spot.image_url) }}" class="custom-card-img" alt="{{ spot['name'] }}">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -80,6 +90,19 @@
                                 <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
                                 <!-- Dynamic description -->
                                 <p class="card-text">{{ spot.description }}</p>
+
+                                <!-- See More button -->
+                                <button class="btn" id="see_more"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseSpot{{ loop.index }}"
+                                        aria-expanded="false"
+                                        aria-controls="collapseSpot{{ loop.index }}">
+                                    See More
+                                </button>
+
+                                <!-- Hidden Items -->
+                                <div class="collapse mt-2" id="collapseSpot{{ loop.index }}">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <span class="label">Homepage:</span> 
@@ -98,6 +121,7 @@
                                         </a>
                                     </li>
                                 </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

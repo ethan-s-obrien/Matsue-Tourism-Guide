@@ -270,7 +270,7 @@ def generate_itinerary():
 
 
     all_spots = conn.execute("""
-        SELECT name, category, description, homepage, latitude, longitude, open_hours, duration_hours, popularity
+        SELECT name, category, description, image_url, homepage, latitude, longitude, open_hours, duration_hours, popularity
         FROM TouristSpots
     """).fetchall()
 

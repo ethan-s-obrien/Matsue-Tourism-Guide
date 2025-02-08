@@ -167,10 +167,10 @@ footer.bg-light {
     width: 150px;
   }
 
-  .btn {
+.btn {
     margin-top: 30px;
     margin-bottom: 5px;
-  }
+}
 
 /* Timeline styles */
 
@@ -224,5 +224,52 @@ footer.bg-light {
     color: #6e6e6e;
     margin-top: 5px;
 }
+
+/* Card styling */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fdf5df;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Card body */
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    margin-bottom: 15px;
+}
+
+.card-subtitle {
+    margin-bottom: 10px;
+}
+
+/* Labels inside the card */
+.label {
+    font-weight: bold;
+}
+
+.list-group-item {
+    background: #fdf5df;
+}
+
+.col-md-4 {
+    display: flex;
+}
+
+.custom-card-img {
+    width: 100%;  /* Makes sure it scales within its parent */
+    height: auto;  /* Keeps aspect ratio */
+    object-fit: cover;
+    border-radius: 10px;  /* Optional: rounded corners */
+}
+
+.btn {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: #5ebec4;
+  }
 
   
