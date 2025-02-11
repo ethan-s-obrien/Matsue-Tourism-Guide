@@ -61,28 +61,28 @@ def login():
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 400)
+            return render_template("error.html", message="You must provide username."), 400
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 400)
+            return render_template("error.html", message="You must provide password."), 400
 
         # Query database for username
         rows = conn.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+            "SELECT * FROM Users WHERE username = ?", (request.form.get("username"),)
+        ).fetchall() # Fetch all the matching rows as a list
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
         ):
-            return apology("invalid username and/or password", 400)
+            return render_template("error.html", message="Invalid username and/or password."), 400
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        session["user_id"] = rows[0]["user_id"]
 
         # Redirect user to home page
-        return redirect("mytrip.html")
+        return redirect("/mytrip")
 
     # User reached route via GET (as by clicking a link or via redirect)
     return render_template("login.html")
@@ -142,7 +142,6 @@ def register():
 @app.route('/survey', methods=['GET', 'POST'])
 def survey():
     if request.method == 'POST':
-        print("Survey POST request received")
 
         # Collect user ID from session
         user_id = session.get('user_id')
@@ -165,9 +164,6 @@ def survey():
             '60-69': int(request.form.get('age_60_69', 0)),
             '70+': int(request.form.get('age_70+', 0)),
         }
-
-        print(request.form)
-        print(f"Preferences received: {preferences}")
 
 
         # Insert survey responses
@@ -234,31 +230,43 @@ def survey():
 
 @app.route('/mytrip')
 def generate_itinerary():
-    """Genearte the personalized itinerary for the user"""
+    """Generate the personalized itinerary for the user"""
     conn = get_db()
 
     # Get the current user ID from the session
     user_id = session.get('user_id')
     if not user_id:
         return render_template("error.html", message="You must be logged in to view your trip."), 403
+    
+    # Fetch the latest survey data submitted
+    latest_response = conn.execute("""
+        SELECT response_id
+        FROM SurveyResponses
+        WHERE user_id = ?
+        ORDER BY submitted_at DESC
+        LIMIT 1
+    """, (user_id,)).fetchone()
 
-    #Fetch user data
+    # Ensure we actually pulled survey data
+    if not latest_response:
+        return render_template("error.html", message="No survey found. Please complete the survey first."), 400
+    
+    # Use the latest survey response_id for the user
+    response_id = latest_response['response_id']
+
+    #Fetch user data via response_id
     user_preferences = conn.execute("""
         SELECT preference
         FROM Preferences
-        WHERE response_id = (
-            SELECT response_id FROM SurveyResponses WHERE user_id = ?
-        )
-    """, (user_id,)).fetchall()
+        WHERE response_id = ?
+    """, (response_id,)).fetchall()
     preferences = {row['preference']: len(user_preferences) -index for index, row in enumerate(user_preferences)}
 
     trip_length = conn.execute("""
     SELECT days, hours
     FROM TripLength
-    WHERE response_id = (
-        SELECT response_id FROM SurveyResponses WHERE user_id = ?
-    )                           
-    """, (user_id,)).fetchone()
+    WHERE response_id = ?                     
+    """, (response_id,)).fetchone()
 
     print(f"Trip length raw data: {trip_length}")  # Add this for debugging
 
