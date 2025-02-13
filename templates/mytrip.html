@@ -15,7 +15,7 @@
 
     {% for spot in spots %}
         {% if spot.time_of_day == "Morning" %}
-        <div class="timeline-item">
+        <div class="timeline-item {% if loop.first %}first-item{% endif %} {% if loop.last %}last-item{% endif %}">
             <div class="timeline-content">
                 <div class="card">
                     <div class="row g-0">
@@ -75,7 +75,7 @@
 
     {% for spot in spots %}
         {% if spot.time_of_day == "Afternoon" %}
-        <div class="timeline-item">
+        <div class="timeline-item {% if loop.first %}first-item{% endif %} {% if loop.last %}last-item{% endif %}">
             <div class="timeline-content">
                 <div class="card">
                     <div class="row g-0">

@@ -2,6 +2,8 @@
 .custom-navbar {
     background-color: #fdf5df !important;
     border-bottom: 2px solid #5ebec4;
+    display: flex;
+    align-items: center;
 }
 
 /* Navbar Brand Styling */
@@ -11,7 +13,6 @@
     font-family: "Fjalla One", serif;
     font-weight: 400;
     font-style: normal;
-
 }
 
 /* Navbar Items Styling */
@@ -21,7 +22,6 @@
     font-family: "Fjalla One", serif;
     font-weight: 400;
     font-style: normal;
-
 }
 
 .custom-navbar .nav-link:hover {
@@ -197,6 +197,32 @@ footer.bg-light {
     height: 100%;
     background: #5ebec4;
     transform: translateX(-50%);
+}
+
+/* Hide the line for the first item of each day */
+.timeline-item.first-item::before {
+    content: "";
+    position: absolute;
+    left: 49.8%;
+    top: 0;
+    width: 4px;
+    height: 50%;
+    background: #5ebec4;
+    transform: translateX(0%);
+    transform: translateY(100%);
+}
+
+/* Hide line after last item */
+.timeline-item.last-item::before {
+    content: "";
+    position: absolute;
+    left: 49.8%;
+    top: 0;
+    width: 4px;
+    height: 50%;
+    background: #5ebec4;
+    transform: translateX(0%);
+    transform: translateY(0%);
 }
 
 .timeline-content {

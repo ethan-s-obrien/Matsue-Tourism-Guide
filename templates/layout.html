@@ -29,15 +29,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    {% if session["user_id"] %}
-                        <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/quote">Search</a></li>
+                    {% if session["user_id"] and not on_survey %}
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="/survey" onclick="return confirmRetake();">Retake Survey</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                         </ul>
-                        <ul class="navbar-nav ms-auto mt-2">
+                    {% elif session["user_id"] and on_survey %}
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="/mytrip">My Trip</a></li>
                             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                         </ul>
                     {% else %}
-                        <ul class="navbar-nav ms-auto mt-2">
+                        <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
                             <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
                         </ul>
@@ -45,6 +48,11 @@
                 </div>
             </div>
         </nav>
+        <script>
+            function confirmRetake() {
+                return confirm("Submitting a new survey will overwrite your current survey submission and itinerary. Do you want to proceed?");
+            }
+        </script>
     </body>
 
         <main class="container py-5 text-center flex-grow-1">

@@ -81,6 +81,16 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["user_id"]
 
+        # Check if user has submitted their survey
+        survey_check = conn.execute(
+            "SELECT COUNT(*) FROM SurveyResponses WHERE user_id = ?", (rows[0]["user_id"],)
+        ).fetchone()[0]
+
+        # Redirect to survey if none found
+        if survey_check == 0:
+            return redirect("/survey")
+
+
         # Redirect user to home page
         return redirect("/mytrip")
 
@@ -226,7 +236,7 @@ def survey():
         return redirect('/mytrip')
     
     # Render form for GET requests
-    return render_template('survey.html')
+    return render_template('survey.html', on_survey=True)
 
 @app.route('/mytrip')
 def generate_itinerary():
