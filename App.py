@@ -204,11 +204,10 @@ def survey():
             )
 
             # Insert preferences
-            for preference in preferences:
-                conn.execute(
-                    "INSERT INTO Preferences (response_id, preference) VALUES (?,?)",
-                    (response_id, preference)
-                )
+            conn.execute(
+                "INSERT INTO Preferences (response_id, preference) VALUES (?,?)",
+                (response_id, preferences)
+            )
             
             # Insert trip length
             conn.execute(
@@ -269,8 +268,15 @@ def generate_itinerary():
         SELECT preference
         FROM Preferences
         WHERE response_id = ?
-    """, (response_id,)).fetchall()
-    preferences = {row['preference']: len(user_preferences) -index for index, row in enumerate(user_preferences)}
+    """, (response_id,)).fetchone()
+
+    # Ensure there's a valid result before processing
+    preferences_list = user_preferences[0].split(',')  # Correctly split CSV string
+
+    preferences = {category.strip(): len(preferences_list) - index for index, category in enumerate(preferences_list)}
+    
+    # Debugging check
+    print(f"Processed Preferences: {preferences}")
 
     trip_length = conn.execute("""
     SELECT days, hours
@@ -278,20 +284,13 @@ def generate_itinerary():
     WHERE response_id = ?                     
     """, (response_id,)).fetchone()
 
-    print(f"Trip length raw data: {trip_length}")  # Add this for debugging
-
     # Calculate total trip time in hours
     total_time = trip_length['days'] * 7 + trip_length['hours'] # Total hours of trip based on 7 hours of sightseeing per day
-
-    #Debug database path
-    print(f"Database path: {app.config['DATABASE']}")
-
 
     all_spots = conn.execute("""
         SELECT name, category, description, image_url, homepage, latitude, longitude, open_hours, duration_hours, popularity
         FROM TouristSpots
     """).fetchall()
-
 
     # Step 2: Score and filter spots
     scored_spots = []
@@ -302,14 +301,16 @@ def generate_itinerary():
         popularity_score = spot['popularity']
         # Final Score
         final_score = category_score + popularity_score
-
+        
+        print(f"Spot: {spot['name']}, Category: {spot['category']}, "
+          f"Category Score: {category_score}, Popularity Score: {popularity_score}, Final Score: {final_score}")
         # Add spot details and scores
         scored_spots.append({
             'spot': spot,
             'score': final_score,
             'visit_duration': (spot['duration_hours'])
         })
-
+ 
     # Step 3: Sort by score descending
     scored_spots = sorted(scored_spots, key=lambda x: x['score'], reverse=True)
 

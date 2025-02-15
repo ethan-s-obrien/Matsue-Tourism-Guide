@@ -29,12 +29,18 @@
                                 <h5 class="card-title">{{ spot.name }}</h5>
                                 <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
                                 <!-- Dynamic description -->
-                                <p class="card-text">{{ spot.description }}</p>
+                                <p class="card-text">
+                                    <span class="short-text">
+                                        {{ spot.description[:100] }} {% if spot.description|length > 100 %}...{% endif %}
+                                    </span>
+                                    <span class="full-text d-none">{{ spot.description }}</span>
+                                </p>
 
                                 <!-- See More button -->
                                 <button class="btn" id="see_more"
                                         type="button"
                                         data-bs-toggle="collapse"
+                                        onclick="toggleDescription(this)"
                                         data-bs-target="#collapseSpot{{ loop.index }}"
                                         aria-expanded="false"
                                         aria-controls="collapseSpot{{ loop.index }}">
@@ -89,12 +95,18 @@
                                 <h5 class="card-title">{{ spot.name }}</h5>
                                 <h6 class="card-subtitle text-muted">{{ spot.category }}</h6>
                                 <!-- Dynamic description -->
-                                <p class="card-text">{{ spot.description }}</p>
+                                <p class="card-text">
+                                    <span class="short-text">
+                                        {{ spot.description[:100] }} {% if spot.description|length > 100 %}...{% endif %}
+                                    </span>
+                                    <span class="full-text d-none">{{ spot.description }}</span>
+                                </p>
 
                                 <!-- See More button -->
                                 <button class="btn" id="see_more"
                                         type="button"
                                         data-bs-toggle="collapse"
+                                        onclick="toggleDescription(this)"
                                         data-bs-target="#collapseSpot{{ loop.index }}"
                                         aria-expanded="false"
                                         aria-controls="collapseSpot{{ loop.index }}">
@@ -131,4 +143,23 @@
         {% endif %}
     {% endfor %}
 {% endfor %}
+<script>
+function toggleDescription(button) {
+    let cardBody = button.closest('.card-body');  
+    let shortText = cardBody.querySelector('.short-text');
+    let fullText = cardBody.querySelector('.full-text');
+
+    if (fullText.classList.contains('d-none')) {
+        // Show full text
+        shortText.classList.add('d-none');
+        fullText.classList.remove('d-none');
+        button.textContent = "See Less";  
+    } else {
+        // Hide full text and show shortened version
+        shortText.classList.remove('d-none');
+        fullText.classList.add('d-none');
+        button.textContent = "See More";
+    }
+}
+</script>
 {% endblock %}
