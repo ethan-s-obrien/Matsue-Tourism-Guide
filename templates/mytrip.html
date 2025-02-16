@@ -7,14 +7,14 @@
 {% block main %}
 <div class="container">
     <h1 class="text-center my-4">Your Personalized Itinerary</h1>
+
     <div class="timeline">
         {% for day, spots in itinerary.items() %}
     <h3 class="day-header">Day {{ day }}</h3>
 
     <h4 class="time-header">Morning</h4>
 
-    {% for spot in spots %}
-        {% if spot.time_of_day == "Morning" %}
+    {% for spot in spots if spot.time_of_day == "Morning" %}
         <div class="timeline-item {% if loop.first %}first-item{% endif %} {% if loop.last %}last-item{% endif %}">
             <div class="timeline-content">
                 <div class="card">
@@ -74,13 +74,11 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     {% endfor %}
 
     <h4 class="time-header">Afternoon</h4>
 
-    {% for spot in spots %}
-        {% if spot.time_of_day == "Afternoon" %}
+    {% for spot in spots if spot.time_of_day == "Afternoon" %}
         <div class="timeline-item {% if loop.first %}first-item{% endif %} {% if loop.last %}last-item{% endif %}">
             <div class="timeline-content">
                 <div class="card">
@@ -140,7 +138,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     {% endfor %}
 {% endfor %}
 <script>

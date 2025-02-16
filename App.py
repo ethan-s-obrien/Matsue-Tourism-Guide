@@ -274,9 +274,6 @@ def generate_itinerary():
     preferences_list = user_preferences[0].split(',')  # Correctly split CSV string
 
     preferences = {category.strip(): len(preferences_list) - index for index, category in enumerate(preferences_list)}
-    
-    # Debugging check
-    print(f"Processed Preferences: {preferences}")
 
     trip_length = conn.execute("""
     SELECT days, hours
@@ -302,8 +299,6 @@ def generate_itinerary():
         # Final Score
         final_score = category_score + popularity_score
         
-        print(f"Spot: {spot['name']}, Category: {spot['category']}, "
-          f"Category Score: {category_score}, Popularity Score: {popularity_score}, Final Score: {final_score}")
         # Add spot details and scores
         scored_spots.append({
             'spot': spot,
@@ -317,14 +312,15 @@ def generate_itinerary():
     # Step 4: Build the itinerary
     itinerary = []
     remaining_time = total_time
+    day_count = (remaining_time / 7)
     for spot_data in scored_spots:
         if spot_data in scored_spots:
             if spot_data['visit_duration'] <= remaining_time:
                 itinerary.append(spot_data['spot'])
                 remaining_time -= spot_data['visit_duration']
-
-            if remaining_time <= 0: # Beak loop no time left
-                break
+                day_count -= (spot_data['visit_duration'] / 7)
+        elif spot_data['visit_duration'] >= remaining_time:
+            break
 
     # Step 5: Divide trip schedule into days with mornings and afternoons
     current_day = 1
@@ -332,12 +328,15 @@ def generate_itinerary():
     afternoon_count = 0
     structured_itinerary = {}
 
-    for spot_data in scored_spots:
+    for spot_data in itinerary:
+        # Stop processing if it exceeds trip length
+        if current_day > trip_length['days']:
+            break
+
         if current_day not in structured_itinerary:
             structured_itinerary[current_day] = []
 
-        spot = dict(spot_data['spot']) # Feed in all the data to structured_itinerary
-        visit_duration = spot_data['visit_duration']
+        spot = dict(spot_data) # Feed in all the data to structured_itinerary 
 
         if morning_count < 2:
             spot['time_of_day'] = "Morning"
@@ -351,6 +350,5 @@ def generate_itinerary():
             current_day += 1
             morning_count = 0
             afternoon_count = 0
-
     
     return render_template("mytrip.html", itinerary=structured_itinerary)
