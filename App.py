@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import json
 
 from flask import Flask, g, flash, redirect, render_template, request, session
 from flask_session import Session
@@ -174,6 +175,7 @@ def survey():
             '60-69': int(request.form.get('age_60_69', 0)),
             '70+': int(request.form.get('age_70+', 0)),
         }
+        pace = request.form.get('pace')
 
 
         # Insert survey responses
@@ -222,6 +224,12 @@ def survey():
                         "INSERT INTO AgeBrackets (response_id, age_bracket, num_people) VALUES (?, ?, ?)",
                         (response_id, bracket, count)
                     )
+
+            # Insert pace of schedule
+            conn.execute(
+                "INSERT INTO pace (pace) VALUES (?)",
+                (json.dumps(pace),) #COnverts list into JSON string
+            )
 
             # Commit changes
             conn.commit()

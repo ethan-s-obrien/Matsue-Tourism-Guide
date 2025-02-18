@@ -55,9 +55,13 @@ body {
 .carousel-inner img {
     flex-shrink: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
     object-position: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fdf5df;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-caption {
@@ -298,4 +302,7 @@ footer.bg-light {
     background: #5ebec4;
   }
 
+  .footer {
+    color: #5ebec4;
+  }
   
