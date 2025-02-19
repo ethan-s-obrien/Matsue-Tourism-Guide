@@ -175,7 +175,7 @@ def survey():
             '60-69': int(request.form.get('age_60_69', 0)),
             '70+': int(request.form.get('age_70+', 0)),
         }
-        pace = request.form.get('pace')
+        pace_str = request.form.get('pace')
 
 
         # Insert survey responses
@@ -226,9 +226,13 @@ def survey():
                     )
 
             # Insert pace of schedule
+            if pace_str:
+                # Convert to list, e.g. "2, 3" to [2, 3]
+                pace_list = [int(num) for num in pace_str.split(", ")]
+
             conn.execute(
-                "INSERT INTO pace (pace) VALUES (?)",
-                (json.dumps(pace),) #COnverts list into JSON string
+                "INSERT INTO pace (response_id ,pace) VALUES (?, ?)",
+                (response_id, json.dumps(pace_list)) #Converts list into JSON string
             )
 
             # Commit changes
@@ -289,6 +293,12 @@ def generate_itinerary():
     WHERE response_id = ?                     
     """, (response_id,)).fetchone()
 
+    # Call pace arrays
+    pace = conn.execute(
+        "SELECT json_extract(pace, '$[0]'), json_extract(pace, '$[1]') FROM pace WHERE response_id = ?",
+        (response_id,)
+    ).fetchone()
+
     # Calculate total trip time in hours
     total_time = trip_length['days'] * 7 + trip_length['hours'] # Total hours of trip based on 7 hours of sightseeing per day
 
@@ -346,11 +356,11 @@ def generate_itinerary():
 
         spot = dict(spot_data) # Feed in all the data to structured_itinerary 
 
-        if morning_count < 2:
+        if morning_count < pace[0]:
             spot['time_of_day'] = "Morning"
             structured_itinerary[current_day].append(spot)
             morning_count += 1
-        elif afternoon_count < 3:
+        elif afternoon_count < pace[1]:
             spot['time_of_day'] = "Afternoon"
             structured_itinerary[current_day].append(spot)
             afternoon_count += 1
