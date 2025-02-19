@@ -41,14 +41,14 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         onclick="toggleDescription(this)"
-                                        data-bs-target="#collapseSpot{{ loop.index }}"
+                                        data-bs-target="#collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}"
                                         aria-expanded="false"
-                                        aria-controls="collapseSpot{{ loop.index }}">
+                                        aria-controls="collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}">
                                     See More
                                 </button>
 
                                 <!-- Hidden Items -->
-                                <div class="collapse mt-2" id="collapseSpot{{ loop.index }}">
+                                <div class="collapse mt-2" id="collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <span class="label">Homepage:</span> 
@@ -105,14 +105,14 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         onclick="toggleDescription(this)"
-                                        data-bs-target="#collapseSpot{{ loop.index }}"
+                                        data-bs-target="#collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}"
                                         aria-expanded="false"
-                                        aria-controls="collapseSpot{{ loop.index }}">
+                                        aria-controls="collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}">
                                     See More
                                 </button>
 
                                 <!-- Hidden Items -->
-                                <div class="collapse mt-2" id="collapseSpot{{ loop.index }}">
+                                <div class="collapse mt-2" id="collapseSpot{{ day }}{{ spot.time_of_day }}{{ loop.index }}">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <span class="label">Homepage:</span> 
