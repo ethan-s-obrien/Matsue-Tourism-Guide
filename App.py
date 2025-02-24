@@ -135,6 +135,12 @@ def register():
         username_count = sql_count.fetchone()[0] # Fetchone to check username isn't in use
         if username_count != 0:
             return render_template("error.html", message="Username already exists."), 400
+        
+        # Check if email address already registered
+        sql_count = conn.execute("SELECT COUNT(*) AS count FROM users WHERE email = ?", (email,))
+        username_count = sql_count.fetchone()[0] # Fetchone to check email isn't in use
+        if username_count != 0:
+            return render_template("error.html", message="Email address already in use."), 400
 
         # Hash password
         hashed_password = generate_password_hash(password)
