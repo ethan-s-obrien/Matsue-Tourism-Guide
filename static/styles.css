@@ -56,6 +56,7 @@ body {
     flex-shrink: 0;
     width: 100%;
     height: auto;
+    max-height: 60vh;
     object-fit: cover;
     object-position: center;
     border-radius: 10px;
